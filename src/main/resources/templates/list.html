@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- css -->
+    <link
+      href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
+      rel="stylesheet"
+      integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN"
+      crossorigin="anonymous"
+    />
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+      integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
+      crossorigin="anonymous"
+    />
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css"
+      integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp"
+      crossorigin="anonymous"
+    />
+    <link rel="stylesheet" href="./mercari.css" th:href="@{/css/mercari.css}" />
+    <!-- script -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script
+      src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
+      integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+      crossorigin="anonymous"
+    ></script>
+    <title>Rakus Items</title>
+  </head>
+  <body>
+    <!-- navbar -->
+    <div th:insert="header :: frag_header"></div>
+    <div id="main" class="container-fluid">
+      <!-- addItem link -->
+      <div id="addItemButton">
+        <a class="btn btn-default" href="./add.html" th:href="@{/add-item}"
+          ><i class="fa fa-plus-square-o"></i> Add New Item</a
+        >
+      </div>
+
+      <!-- 検索フォーム -->
+      <div id="forms">
+        <form
+          th:action="@{/item-list/search}"
+          class="form-inline"
+          role="form"
+          method="post"
+        >
+          <input type="hidden" name="itemID" th:value="${itemID}" />
+          <div class="form-group">
+            <input
+              type="input"
+              class="form-control"
+              id="name"
+              placeholder="item name"
+              name="name"
+            />
+          </div>
+          <div class="form-group"><i class="fa fa-plus"></i></div>
+          <div class="form-group">
+            <select class="form-control" id="big" name="big">
+              <option th:value="0">- parentCategory -</option>
+            </select>
+            <select class="form-control" id="middle" name="middle">
+              <option th:value="0">- childCategory -</option>
+            </select>
+            <select class="form-control" id="small" name="small">
+              <option th:value="0">- grandChild -</option>
+            </select>
+          </div>
+          <div class="form-group"><i class="fa fa-plus"></i></div>
+          <div class="form-group">
+            <input
+              type="text"
+              class="form-control"
+              placeholder="brand"
+              name="brand"
+            />
+          </div>
+          <div class="form-group"></div>
+          <button type="submit" class="btn btn-default">
+            <i class="fa fa-angle-double-right"></i> search
+          </button>
+        </form>
+      </div>
+
+      <!-- pagination -->
+      <div class="pages">
+        <nav class="page-nav">
+          <ul class="pager">
+            <li class="previous">
+              <a th:href="@{/item-list} + '?pageNum=' + ${pageNum-1}"
+                >&larr; prev</a
+              >
+            </li>
+            <li class="next">
+              <a th:href="@{/item-list} + '?pageNum=' + ${pageNum+1}"
+                >&larr; next</a
+              >
+            </li>
+          </ul>
+        </nav>
+      </div>
+
+      <!-- table -->
+      <div class="table-responsive">
+        <table id="item-table" class="table table-hover table-condensed">
+          <thead>
+            <tr>
+              <th>name</th>
+              <th>price</th>
+              <th>category</th>
+              <th>brand</th>
+              <th>cond</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr th:each="item : ${itemList}">
+              <td class="item-name">
+                <a th:href="@{/item-detail} + '?id=' + ${item.id}"
+                  ><span th:text="${item.name}"></span
+                ></a>
+              </td>
+              <td class="item-price"><span th:text="${item.price}"></span></td>
+              <td class="item-category">
+                <a th:href="@{/item-list/search} + '?big=' + ${item.big}"
+                  ><span th:text="${item.big}"></span
+                ></a>
+                /
+                <a th:href="@{/item-list/search} + '?middle=' + ${item.middle}"
+                  ><span th:text="${item.middle}"></span
+                ></a>
+                /
+                <a th:href="@{/item-list/search} + '?small=' + ${item.small}"
+                  ><span th:text="${item.small}"></span
+                ></a>
+              </td>
+              <td class="item-brand">
+                <a th:href="@{/item-list/search} + '?brand=' + ${item.brand}"
+                  ><span th:text="${item.brand}"></span
+                ></a>
+              </td>
+              <td class="item-condition">
+                <span th:text="${item.condition_id}"></span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- pagination -->
+      <div class="pages">
+        <nav class="page-nav">
+          <ul class="pager">
+            <li class="previous">
+              <a th:href="@{/item-list} + '?pageNum=' + ${pageNum-1}"
+                >&larr; prev</a
+              >
+            </li>
+            <li class="next">
+              <a th:href="@{/item-list} + '?pageNum=' + ${pageNum+1}"
+                >next &rarr;</a
+              >
+            </li>
+          </ul>
+        </nav>
+        <!-- ページ番号を指定して表示するフォーム -->
+        <div id="select-page">
+          <form class="form-inline" method="post" th:action="@{/item-list}">
+            <div class="form-group">
+              <div class="input-group col-xs-6">
+                <label></label>
+                <input type="text" class="form-control" name="pageNum" />
+                <!-- 総ページ数 -->
+                <div class="input-group-addon">
+                  /
+                  <span th:text="${maxPage}"></span>
+                </div>
+              </div>
+              <div class="input-group col-xs-1">
+                <button type="submit" class="btn btn-default">Go</button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.6.1.min.js"></script>
+    <script src="/js/search.js"></script>
+  </body>
+</html>
